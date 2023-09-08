@@ -3,7 +3,7 @@ import seaborn as sns
 
 
 def create_donut(x, labels, title):
-    fig1, ax1 = plt.subplots(figsize=(5, 5), dpi=150)
+    fig1, ax1 = plt.subplots(figsize=(5, 5), dpi=100)
 
     ax1.pie(
         x=x,
