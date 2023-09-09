@@ -1,39 +1,45 @@
+import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import opinionated
 
 
-def create_donut(x, labels, title):
-    fig1, ax1 = plt.subplots(figsize=(5, 5), dpi=100)
+def label_point(x, y, val, ax):
+    a = pd.concat({"x": x, "y": y, "val": val}, axis=1)
+    for i, point in a.iterrows():
+        ax.text(
+            point["x"],
+            point["y"],
+            str(point["val"]),
+            alpha=0.75,
+            ha="center",
+            va="center",
+        )
+
+
+def create_donut(x, labels, title=None, subtitle=None):
+    fig1 = plt.figure(figsize=(12, 8))
+    ax1 = fig1.add_axes((0.02, 0.325, 0.5, 0.5))
 
     ax1.pie(
         x=x,
         labels=labels,
-        autopct="%.0f%%",
+        autopct="%.1f%%",
+        pctdistance=0.72,
         shadow=False,
         startangle=90,
         textprops={"fontsize": 14},
-        colors=["#483838", "#42855B", "#90B77D", "#D2D79F"],
     )
 
-    ax1.axis("equal")  # Equal aspect ratio ensures that pie is drawn as a circle.
-    ax1.set_title(
-        title,
-        pad=25,
-        loc="center",
-        fontdict={
-            "fontsize": 18,
-            "fontweight": "bold",
-            "verticalalignment": "baseline",
-            # 'horizontalalignment': "right"
-        },
-    )
+    ax1.axis("equal")
+    if title is not None and subtitle is not None:
+        opinionated.set_title_and_suptitle(title, subtitle)
 
     # draw circle
-    centre_circle = plt.Circle((0, 0), 0.70, fc="white")
+    centre_circle = plt.Circle((0, 0), 0.50, fc="white")
     fig = plt.gcf()
     fig.gca().add_artist(centre_circle)
-    # Equal aspect ratio ensures that pie is drawn as a circle
     ax1.axis("equal")
     ax1.set_facecolor("white")
-    plt.tight_layout()
+
     plt.show()
