@@ -19,7 +19,7 @@ def label_point(x, y, val, ax):
 
 
 def create_donut(x, labels, title=None, subtitle=None):
-    fig1 = plt.figure(figsize=(12, 8))
+    fig1 = plt.figure(figsize=(12, 8), dpi=200)
     ax1 = fig1.add_axes((0.02, 0.325, 0.5, 0.5))
 
     ax1.pie(
