@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import opinionated
+import colormaps as cmaps
 
 
 def label_point(x, y, val, ax):
@@ -29,6 +30,7 @@ def create_donut(x, labels, title=None, subtitle=None):
         shadow=False,
         startangle=90,
         textprops={"fontsize": 14},
+        colors=cmaps.bold[2:5]._colors,
     )
 
     ax1.axis("equal")
