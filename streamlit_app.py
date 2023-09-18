@@ -3,12 +3,14 @@ import pandas as pd
 import numpy as np
 from src import module
 from pathlib import Path
-st.set_page_config(layout="wide", initial_sidebar_state="expanded")
 
-st.title("Pemilu DPRP DKI Jakarta 2019")
-st.title("Sainte Lague Simulation 🗳️")
-st.markdown("This app simulates the Pemilu DPRP DKI Jakarta 2019")
-st.markdown("You can change the vote for each partai and calon")
+# set page configuration
+st.set_page_config(
+    page_title= "Sainte Lague Simulation",
+    page_icon= "🗳️",
+    initial_sidebar_state= "expanded",
+    layout = "wide"
+)
 
 # load dataframes
 @st.cache_data
@@ -18,22 +20,22 @@ def load_data():
     return df
 df = load_data()
 
+# title and markdown
+st.markdown(
+    "### Pemilu DPRP DKI Jakarta 2019"
+    "\n# Sainte Lague Simulation 🗳️"
+)
+st.markdown("This app simulates the Pemilu DPRP DKI Jakarta 2019")
+st.markdown("You can change the vote each calon")
+st.divider()
+
+# set dapil selector
 with st.sidebar:
-    # set dapil selector
+    st.markdown("# Select dapil here 👇")
     dapil = st.radio(
-        "Select dapil 👇",
-        [
-            '1',
-            '2',
-            '3',
-            '4',
-            '5',
-            '6',
-            '7',
-            '8',
-            '9',
-            '10',
-        ],
+        label="Select dapil here 👇",
+        label_visibility="hidden",  
+        options=['1','2','3','4','5','6','7','8','9','10'],
         captions=[
             'Jakarta Pusat',
             'Kepulauan Seribu dan Jakarta Utara',
