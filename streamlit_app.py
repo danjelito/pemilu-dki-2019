@@ -118,6 +118,8 @@ selected_calon = (
     .drop(columns=["partai_y"])
     .rename(columns={"vote": "suara_calon", "rank": "ranking_calon_di_partainya"})
     .rename(columns=lambda c: c.replace("_x", "").title().replace("_", " "))
-)
+)       
 selected_calon.index = selected_calon.index + 1
-st.dataframe(selected_calon, width=800, height=460, hide_index=False)
+df_len = len(selected_calon)
+df_height = (df_len + 1) * 35 + 3
+st.dataframe(selected_calon, width=800, height=df_height, hide_index=False)
