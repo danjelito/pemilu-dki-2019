@@ -68,10 +68,13 @@ st.markdown("1️⃣ Double click the number of calon vote to change.")
 st.markdown("2️⃣ Click table header to sort.")
 st.markdown("3️⃣ Scroll on the right side of the table to see more.")
 
-if 'key' not in st.session_state:
+if "key" not in st.session_state:
     st.session_state.key = 0
+
+
 def reset():
     st.session_state.key += 1
+
 
 edited_df_dapil = st.data_editor(
     df_dapil,
@@ -88,9 +91,9 @@ edited_df_dapil = st.data_editor(
     },
     disabled=["dapil", "partai", "partai_vote", "no_urut", "nama"],
     hide_index=True,
-    key=f'editor_{st.session_state.key}'
+    key=f"editor_{st.session_state.key}",
 )
-st.button('Reset', on_click=reset)
+st.button("Reset", on_click=reset)
 
 # sainte lague calculation
 # use editable df to get the elected valon
