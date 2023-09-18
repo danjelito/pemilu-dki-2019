@@ -13,9 +13,15 @@ st.set_page_config(
 )
 
 
+def reset():
+    """Function to reset editable DF."""
+    st.session_state.key += 1
+
+
 # load dataframes
 @st.cache_data
 def load_data():
+    """Load DF with caching."""
     path = Path.cwd() / "output/vote_result.xlsx"
     df = pd.read_excel(path)
     return df
@@ -70,10 +76,6 @@ st.markdown("3️⃣ Scroll on the right side of the table to see more.")
 
 if "key" not in st.session_state:
     st.session_state.key = 0
-
-
-def reset():
-    st.session_state.key += 1
 
 
 edited_df_dapil = st.data_editor(
