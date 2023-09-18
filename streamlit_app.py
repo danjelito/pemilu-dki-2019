@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from src import module
 from pathlib import Path
+st.set_page_config(layout="wide", initial_sidebar_state="expanded")
 
 st.title("Pemilu DPRP DKI Jakarta 2019")
 st.title("Sainte Lague Simulation 🗳️")
@@ -10,8 +11,12 @@ st.markdown("This app simulates the Pemilu DPRP DKI Jakarta 2019")
 st.markdown("You can change the vote for each partai and calon")
 
 # load dataframes
-path = Path.cwd() / "output/vote_result.xlsx"
-df = pd.read_excel(path)
+@st.cache_data
+def load_data():
+    path = Path.cwd() / "output/vote_result.xlsx"
+    df = pd.read_excel(path)
+    return df
+df = load_data()
 
 with st.sidebar:
     # set dapil selector
@@ -43,3 +48,41 @@ with st.sidebar:
         ],
         key="dapil_no",
     )
+
+# get dataframe based on dapil
+dapil_no = int(dapil)
+df_dapil = df.loc[df["dapil_no"] == dapil_no]
+num_calon_selected = df_dapil.loc[:, 'terpilih'].sum()
+
+# prepare dataframe for display
+df_dapil = (df_dapil
+            .assign(dapil=lambda df_: df_["dapil_no"].astype(str) + " " + df_["dapil_nama"])
+            )
+
+# starting from here, use editable DF
+edited_df_dapil = st.data_editor(
+    df_dapil,
+    width=800, 
+    height=1200, 
+    column_order=["dapil", "partai", "partai_vote", "no_urut", "nama", "vote"],
+    column_config={
+        "dapil": "Dapil",
+        "partai": "Partai",
+        "partai_vote": "Suara Partai",
+        "no_urut": "No Urut Calon",
+        "nama": "Nama",
+        "vote": "Suara Calon",
+    },
+    disabled=["dapil", "partai", "partai_vote", "no_urut", "nama"],
+    hide_index=True,
+)
+
+# use editable df to get the elected valon
+partai_vote, calon_vote = module.get_dapil_data(edited_df_dapil, dapil_no) 
+selected_partai = module.get_selected_partai(partai_vote, num_calon_selected, with_rank=True) 
+selected_calon = module.get_selected_calon(calon_vote, selected_partai, with_partai=True)
+# module.verify_if_selected(df, selected_calon, dapil_no)
+selected_calon.sort(key=lambda x: x[0])
+
+# display the selected calon
+st.write(selected_calon)
