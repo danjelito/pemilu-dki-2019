@@ -82,7 +82,18 @@ partai_vote, calon_vote = module.get_dapil_data(edited_df_dapil, dapil_no)
 selected_partai = module.get_selected_partai(partai_vote, num_calon_selected, with_rank=True) 
 selected_calon = module.get_selected_calon(calon_vote, selected_partai, with_partai=True)
 # module.verify_if_selected(df, selected_calon, dapil_no)
-selected_calon.sort(key=lambda x: x[0])
+# selected_calon.sort(key=lambda x: x[0])
 
 # display the selected calon
-st.write(selected_calon)
+selected_calon = pd.DataFrame(selected_calon, columns=["partai", "nama"])
+selected_calon = (selected_calon
+    .assign(
+        terpilih_di_ronde=list(range(1, len(selected_calon) + 1))
+    )
+    .merge(calon_vote, left_on="nama", right_on="nama", how="left")
+    .drop(columns=["partai_y"])
+    .rename(columns={"vote": "suara_calon", "rank": "ranking_calon_di_partainya"})
+    .rename(columns=lambda c:c.replace("_x", "").title().replace("_", " "))
+)
+selected_calon.index = selected_calon.index + 1
+st.dataframe(selected_calon, width=800, hide_index=False)
