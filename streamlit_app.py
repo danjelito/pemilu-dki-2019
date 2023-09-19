@@ -31,6 +31,7 @@ df = load_data()
 st.markdown("### Pemilu DPRP DKI Jakarta 2019" "\n# Sainte Lague Simulation 🗳️")
 st.markdown("This app simulates the Pemilu DPRP DKI Jakarta 2019.")
 st.markdown("You can change the vote each calon and see if they become selected or not.")
+st.markdown("##### Open in PC for best experience.")
 st.divider()
 
 # set dapil selector
