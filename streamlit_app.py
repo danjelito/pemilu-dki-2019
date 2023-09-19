@@ -77,7 +77,7 @@ if "key" not in st.session_state:
 
 edited_df_dapil = st.data_editor(
     df_dapil,
-    width=800,
+    width=1000,
     height=450,
     column_order=["dapil", "partai", "partai_vote", "no_urut", "nama", "vote"],
     column_config={
@@ -129,4 +129,4 @@ selected_calon = (selected_calon
 selected_calon.index = selected_calon.index + 1
 df_len = len(selected_calon)
 df_height = (df_len + 1) * 35 + 3
-st.dataframe(selected_calon, width=800, height=df_height, hide_index=False)
+st.dataframe(selected_calon, width=1000, height=df_height, hide_index=False)
