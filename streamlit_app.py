@@ -14,11 +14,10 @@ st.set_page_config(
 
 
 def reset():
-    """Function to reset editable DF."""
+    """Reset editable DF."""
     st.session_state.key += 1
 
 
-# load dataframes
 @st.cache_data
 def load_data():
     """Load DF with caching."""
@@ -77,7 +76,6 @@ st.markdown("3️⃣ Scroll on the right side of the table to see more.")
 if "key" not in st.session_state:
     st.session_state.key = 0
 
-
 edited_df_dapil = st.data_editor(
     df_dapil,
     width=800,
@@ -101,23 +99,33 @@ st.button("Reset", on_click=reset)
 # use editable df to get the elected valon
 partai_vote, calon_vote = module.get_dapil_data(edited_df_dapil, dapil_no)
 selected_partai = module.get_selected_partai(
-    partai_vote, num_calon_selected, with_rank=True
+    partai_vote=partai_vote, num_selected=num_calon_selected, with_rank=True
 )
 selected_calon = module.get_selected_calon(
-    calon_vote, selected_partai, with_partai=True
+    calon_vote=calon_vote, selected_partai=selected_partai, with_partai=True
 )
 
 # display the selected calon
 st.markdown("## Result")
-st.markdown("This is the result of the simulation.")
+st.markdown('This is the result of the simulation, sorted by "Terpilih Di Ronde".')
 st.markdown("1️⃣ Click table header to sort.")
 selected_calon = pd.DataFrame(selected_calon, columns=["partai", "nama"])
-selected_calon = (
-    selected_calon.assign(terpilih_di_ronde=list(range(1, len(selected_calon) + 1)))
+selected_calon = (selected_calon
+    .assign(
+        suara_partai_calon=lambda df_: df_["partai"].map(partai_vote),
+        terpilih_di_ronde=list(range(1, len(selected_calon) + 1))
+    )
     .merge(calon_vote, left_on="nama", right_on="nama", how="left")
     .drop(columns=["partai_y"])
-    .rename(columns={"vote": "suara_calon", "rank": "ranking_calon_di_partainya"})
+    .rename(columns={
+        "suara_partai_calon": "suara_partai_+_calon",
+        "vote": "suara_calon", 
+        "rank": "ranking_calon_di_partainya"}
+    )
     .rename(columns=lambda c: c.replace("_x", "").title().replace("_", " "))
+    .loc[:, ["Partai", "Suara Partai + Calon", "Nama", "Suara Calon", 
+             "Ranking Calon Di Partainya", "Terpilih Di Ronde"]]
+    .sort_values("Terpilih Di Ronde")
 )       
 selected_calon.index = selected_calon.index + 1
 df_len = len(selected_calon)
