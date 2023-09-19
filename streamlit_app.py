@@ -29,8 +29,8 @@ df = load_data()
 
 # title and markdown
 st.markdown("### Pemilu DPRP DKI Jakarta 2019" "\n# Sainte Lague Simulation 🗳️")
-st.markdown("This app simulates the Pemilu DPRP DKI Jakarta 2019")
-st.markdown("You can change the vote each calon")
+st.markdown("This app simulates the Pemilu DPRP DKI Jakarta 2019.")
+st.markdown("You can change the vote each calon and see if they become selected or not.")
 st.divider()
 
 # set dapil selector
@@ -67,11 +67,11 @@ df_dapil = df_dapil.assign(
 
 # show editable DF
 st.markdown("## Input Data")
-st.markdown("This table is sortable and changeable.")
+st.markdown("#### This table is *sortable* and *changeable*.")
 st.markdown("1️⃣ Double click the number of calon vote to change.")
 st.markdown("2️⃣ Click table header to sort.")
 st.markdown("3️⃣ Scroll on the right side of the table to see more.")
-st.markdown("4️⃣ Click reset button below table to reset calon vote.")
+st.markdown("4️⃣ Click reset button below table to reset calon vote to the original.")
 
 if "key" not in st.session_state:
     st.session_state.key = 0
@@ -106,8 +106,8 @@ selected_calon = module.get_selected_calon(
 )
 
 # display the selected calon
-st.markdown("## Result")
-st.markdown('This is the result of the simulation, sorted by "Terpilih Di Ronde".')
+st.markdown("## Result - Elected Calon")
+st.markdown('#### This is the *result of the simulation*, sorted by "Terpilih Di Ronde".')
 st.markdown("1️⃣ Click table header to sort.")
 selected_calon = pd.DataFrame(selected_calon, columns=["partai", "nama"])
 selected_calon = (selected_calon
