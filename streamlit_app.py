@@ -60,6 +60,7 @@ with st.sidebar:
 dapil_no = int(dapil)
 df_dapil = df.loc[df["dapil_no"] == dapil_no]
 num_calon_selected = df_dapil.loc[:, "terpilih"].sum()
+num_calon_almost_selected = num_calon_selected # calon almost selected for display
 
 # prepare dataframe for display
 df_dapil = df_dapil.assign(
@@ -73,6 +74,7 @@ st.markdown("1️⃣ Double click the number of calon vote to change.")
 st.markdown("2️⃣ Click table header to sort.")
 st.markdown("3️⃣ Scroll on the right side of the table to see more.")
 st.markdown("4️⃣ Click reset button below table to reset calon vote to the original.")
+st.write("###")
 
 if "key" not in st.session_state:
     st.session_state.key = 0
@@ -90,20 +92,28 @@ edited_df_dapil = st.data_editor(
         "nama": "Nama",
         "vote": "Suara Calon (changeable 👇)",
     },
-    disabled=["dapil", "partai", "partai_vote", "no_urut", "nama"],
-    hide_index=True,
+    disabled=["dapil", "partai", "partai_vote", "no_urut", "nama", "_index"],
+    hide_index=False,
     key=f"editor_{st.session_state.key}",
 )
 st.button("Reset", type="primary", on_click=reset)
 
 # sainte lague calculation
 # use editable df to get the elected valon
-partai_vote, calon_vote = module.get_dapil_data(edited_df_dapil, dapil_no)
+partai_vote, calon_vote = module.get_dapil_data(
+    df=edited_df_dapil, 
+    dapil_no=dapil_no
+)
 selected_partai = module.get_selected_partai(
-    partai_vote=partai_vote, num_selected=num_calon_selected, with_rank=True
+    partai_vote=partai_vote, 
+    num_selected=num_calon_selected, 
+    num_almost_selected= num_calon_almost_selected, 
+    with_rank=True
 )
 selected_calon = module.get_selected_calon(
-    calon_vote=calon_vote, selected_partai=selected_partai, with_partai=True
+    calon_vote=calon_vote, 
+    selected_partai=selected_partai, 
+    with_partai=True
 )
 
 # display the selected calon
@@ -114,7 +124,8 @@ selected_calon = pd.DataFrame(selected_calon, columns=["partai", "nama"])
 selected_calon = (selected_calon
     .assign(
         suara_partai_calon=lambda df_: df_["partai"].map(partai_vote),
-        terpilih_di_ronde=list(range(1, len(selected_calon) + 1))
+        terpilih_di_ronde=list(range(1, len(selected_calon) + 1)), 
+        terpilih=["Terpilih"]*num_calon_selected + ["Nyaris Terpilih"]*num_calon_almost_selected
     )
     .merge(calon_vote, left_on="nama", right_on="nama", how="left")
     .drop(columns=["partai_y"])
@@ -125,10 +136,12 @@ selected_calon = (selected_calon
     )
     .rename(columns=lambda c: c.replace("_x", "").title().replace("_", " "))
     .loc[:, ["Partai", "Suara Partai + Calon", "Nama", "Suara Calon", 
-             "Ranking Calon Di Partainya", "Terpilih Di Ronde"]]
+             "Ranking Calon Di Partainya", "Terpilih", "Terpilih Di Ronde"]]
     .sort_values("Terpilih Di Ronde")
 )       
 selected_calon.index = selected_calon.index + 1
 df_len = len(selected_calon)
 df_height = (df_len + 1) * 35 + 3
+st.write("###")
+st.markdown(f"#### Num of selected calon on this dapil : {num_calon_selected}")
 st.dataframe(selected_calon, width=1000, height=df_height, hide_index=False)
