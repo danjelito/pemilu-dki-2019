@@ -69,34 +69,40 @@ def get_element_cum_count(input_list: list) -> list:
     return output_list
 
 
-def get_selected_partai(partai_vote: dict, num_selected: int, with_rank=True) -> list:
+def get_selected_partai(partai_vote: dict, 
+                        num_selected: int, 
+                        num_almost_selected: int = 0, 
+                        with_rank: bool = True) -> list:
     """Get partai that are selected by Sainte Lague method.
 
     Args:
         partai_vote (dict): dictionary {partai: vote, partai: vote...}.
                             Output from get_dapil_data function.
         num_selected (int): number of calon that is selected.
+        num_almost_selected (int): number of calon that is almost selected.
         with_rank (bool, optional): if True, return cumulative count of each partai.
                                     Defaults to False.
 
     Returns:
         list: list of selected partai based on Sainte Lague method.
     """
+    # partai_vote -> store original partai count
+    # partai_vote_copy -> store partai count that has been divided
     partai_vote_copy = partai_vote.copy()
     selected_partai = []
+    num_round = num_selected + num_almost_selected
 
-    for round in list(range(num_selected)):
-        highest_voted = max(
+    for round in range(num_round):
+        # current highest voted partai
+        highest_voted_this_round = max(
             partai_vote_copy, key=lambda k: partai_vote_copy[k]
-        )  # current highest voted partai
+        )  
         for partai, vote in partai_vote_copy.items():
-            if partai == highest_voted:
-                times_selected = selected_partai.count(
-                    partai
-                )  # how many times this partai been selected
-                round_of_calon = (
-                    times_selected + 1
-                )  # the round of this partai to be selected
+            if partai == highest_voted_this_round:
+                # how many times this partai been selected
+                times_selected = selected_partai.count(partai)  
+                # the round of this partai to be selected
+                round_of_calon = (times_selected + 1)  
                 # divide the starting vote by odd number with index = times selected
                 partai_vote_copy[partai] = partai_vote[partai] / return_odd_number(
                     index=(round_of_calon + 1)  # start dividing by 3, not 1
