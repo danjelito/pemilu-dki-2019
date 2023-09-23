@@ -147,3 +147,20 @@ def get_selected_calon(
         selected_calon = list(zip(partai, selected_calon))
 
     return selected_calon
+
+
+def save_multiple_dfs(list_df, list_sheet_name, filepath):
+    """save multiple dfs to one file with multiple sheets
+
+    Args:
+        list_df (list): list of dataframe objects
+        list_sheet_name (list): list of string for sheet name
+        filepath (string): path of file
+    """
+    filepath= filepath
+    writer = pd.ExcelWriter(filepath, engine= 'xlsxwriter')
+
+    for df in list_df:
+        df.to_excel(writer, sheet_name= list_sheet_name.pop(0), index= False)
+
+    writer.close()

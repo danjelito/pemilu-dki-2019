@@ -1,7 +1,9 @@
 import streamlit as st
 import pandas as pd
-from src import module
 from pathlib import Path
+from datetime import datetime
+import io
+from src import module
 
 # set page configuration
 st.set_page_config(
@@ -145,3 +147,31 @@ df_height = (df_len + 1) * 35 + 3
 st.write("###")
 st.markdown(f"#### Num of selected calon on this dapil : {num_calon_selected}")
 st.dataframe(selected_calon, width=1000, height=df_height, hide_index=False)
+
+# download file
+st.markdown("## Download the Result")
+timestamp = datetime.now()
+filename = f"Pemilu Simulation Result - {timestamp}.xlsx"
+
+# save df to one workbook
+buffer = io.BytesIO()
+with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+    # write each dataframe to a different worksheet
+    (edited_df_dapil
+        .rename(columns=lambda c:c.title().replace("_", "   "))
+        .to_excel(writer, sheet_name='Vote', index=False)
+    )
+    selected_calon.to_excel(writer, sheet_name='Result', index=True)
+
+    # close the Pandas Excel writer and output the Excel file to the buffer
+    writer.close()
+
+    st.caption('Note: This is the resulting file. Download and open it with Excel.')
+    
+    # render download button
+    st.download_button(
+        label= "Click to download",
+        data= buffer,
+        file_name= filename,
+        mime= "application/vnd.ms-excel"
+    )
